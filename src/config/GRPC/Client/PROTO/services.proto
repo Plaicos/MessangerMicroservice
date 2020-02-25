@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+import "User/User.proto";
+import "Authenticator/authenticator.proto";
+import "Inventory/Inventory.proto";

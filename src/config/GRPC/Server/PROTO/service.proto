@@ -1,0 +1,24 @@
+syntax = "proto3";
+package MessangerPackage;
+
+service Messanger {
+    
+} 
+
+
+message scope {
+    bool read = 1;
+    bool write = 2;
+    third_party_scope third_party = 3;
+}
+
+message third_party_scope {
+    bool read = 1;
+    bool write = 2;
+}
+
+message credential {
+    string user = 1;
+    int32 level = 2;
+    scope scope = 3;
+}

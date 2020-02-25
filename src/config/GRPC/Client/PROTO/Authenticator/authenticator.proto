@@ -1,0 +1,51 @@
+syntax = "proto3";
+package AuthPackage;
+
+service Authenticator {
+    //methods
+    rpc createCredential (credential) returns (statusResponse);
+    rpc generateToken (user) returns (tokenResponse);
+    rpc authenticate (token) returns (credential);
+    rpc checkCredentialClearance (credentialCheck) returns (statusResponse);
+}
+
+message Null {}
+
+message statusResponse {
+    string status = 1;
+}
+
+message scope {
+    bool read = 1;
+    bool write = 2;
+    third_party_scope third_party = 3;
+}
+
+message third_party_scope {
+    bool read = 1;
+    bool write = 2;
+}
+
+message credential {
+    string user = 1;
+    int32 level = 2;
+    scope scope = 3;
+}
+
+message user {
+    string user = 1;
+}
+
+message tokenResponse {
+    string token = 1;
+    string status = 2;
+}
+
+message token {
+    string token = 1;
+}
+
+message credentialCheck {
+    credential config = 1;
+    credential credential = 2;
+}

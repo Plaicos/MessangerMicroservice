@@ -1,0 +1,105 @@
+syntax = "proto3";
+package UserPackage;
+
+service User {
+    rpc get_user (userGet) returns (user_data);
+    rpc check_user (userGet) returns (statusResponse);
+    rpc get_user_warehouses (warehouseGet) returns (warehouses);
+    rpc get_user_warehouse (warehouseGet) returns (warehouse);
+}
+
+message warehouseGet {
+    string id= 1;
+    string user = 2;
+    credential credential = 3;
+}
+
+message warehouse {
+    string _id = 1;
+    location location = 2;
+}
+
+message warehouses {
+    repeated warehouse warehouses = 1;
+}
+
+message login_data {
+    string login = 1;
+    string password = 2;
+}
+
+message session {
+    string status = 1;
+    session_data session_data = 2;
+}
+
+message session_data {
+    string logged_user = 1;
+    string token = 2;
+}
+
+message statusResponse {
+    string status = 1;
+}
+
+message userGet {
+    string login = 1;
+    credential credential = 2;
+}
+
+message userDelete {
+    string login = 1;
+    credential credential = 2;
+}
+
+message user_data{
+    string _id = 1;
+    string login = 2;
+    string password = 3;
+    string type = 4;
+    string email = 5;
+    string recovery_email = 6;
+    plan plan = 7;
+    company company = 8;
+}
+
+message company {
+    string cnpj = 1;
+    string type = 2;
+    float minimal_sale_value = 3;
+    float icms = 4;
+    float pis = 5;
+    float cofins = 6;
+}
+
+message plan {
+    string type = 1;
+    string size = 2;
+    string billing = 3;
+}
+
+message payment_data{
+    string method = 1;
+}
+
+message sign_up_data {
+    user_data user_data = 1;
+    payment_data payment_data = 2;
+}
+
+message credential {
+    string user = 1;
+    int32 level = 2;
+    scope scope = 3;
+}
+
+message scope {
+    bool read = 1;
+    bool write = 2;
+    third_party_scope third_party = 3;
+}
+
+message third_party_scope {
+    bool read = 1;
+    bool write = 2;
+}

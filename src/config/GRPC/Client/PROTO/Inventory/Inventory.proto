@@ -1,0 +1,108 @@
+syntax = "proto3";
+package InventoryPackage;
+
+service Inventory {
+    rpc get_user_products (productSearch) returns (productSearchresult);
+    rpc get_product(productGet) returns (product);
+    rpc search_inciName (inciSearch) returns (inciSearchResult);
+    rpc check_location (location) returns (statusResponse);
+}
+
+message location {
+    string country = 1;
+    string state = 2;
+    string city = 3;
+}
+
+message inci {
+    string inci = 1;
+    repeated string functions = 2;
+    string cosing_ref_num = 3;
+    string cas_number = 4;
+    string chemical_desc = 5;
+}
+
+message inciSearch {
+    inciSearchFilter filters = 1;
+    credential credential = 2;
+}
+
+message inciSearchResult {
+    repeated inci result = 1;
+}
+
+message inciSearchFilter {
+    string inci_name = 1;
+}
+
+message productMsg{
+    product product = 1;
+    credential credential = 2;
+}
+
+message product {
+    string _id = 1;
+    string user = 2;
+    string type = 3;
+    string name = 4;
+    string manufacturer = 5;
+    string made_in = 6;
+    repeated string application = 7;
+    repeated string inci_name = 8;
+    repeated string functions = 9;
+    string origin = 10;
+    int32 lead_time = 11;
+    int32 shelf_life = 12;
+    string availability = 13;
+    repeated packing packing = 14;
+    string free_from = 15;
+}
+
+message productSearch{
+    credential credential =1;
+}
+
+message productSearchresult{
+    repeated product products = 1;
+}
+
+message productEdit {
+    string id = 1;
+    product changes = 2;
+    credential credential = 3;
+}
+
+message productDelete {
+    string id = 1;
+    credential credential = 2;
+}
+
+message productGet {
+    string id = 1;
+    credential credential = 2;
+}
+
+message packing {
+    float weigth = 1;
+}
+
+message statusResponse {
+    string status = 1;
+}
+
+message scope {
+    bool read = 1;
+    bool write = 2;
+    third_party_scope third_party = 3;
+}
+
+message third_party_scope {
+    bool read = 1;
+    bool write = 2;
+}
+
+message credential {
+    string user = 1;
+    int32 level = 2;
+    scope scope = 3;
+}
