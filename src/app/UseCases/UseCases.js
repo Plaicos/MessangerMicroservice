@@ -23,22 +23,37 @@ module.exports = class UseCases {
                 return reject("INTERNAL SERVER ERRRO, TRY LATER")
             }
 
+            let Chat = new Object()
+
             try {
-                if (await DAO.checkChatByUsers([user, credential.user])) {
-                    var Chat = await new entities.Chat({ DAO, SCI, chat: { users: [user, credential.user] } }).load()
+                //monolog
+                let ChatExist = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).exists()
+
+                if (ChatExist) {
+                    Chat = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).load()
                 }
                 else {
-                    var Chat = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user], type: "dialog" } }).build()
+                    Chat = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).build()
+                    await Chat.register()
+                    Chat = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).load()
                 }
-                let Message = await new entities.Message({ DAO, SCI, message }).build()
                 await Chat.operate(credential)
+
+                let Message = await new entities.Message({ DAO, SCI, message: { user: credential.user, chat: Chat.id, text: message.text } }).build()
                 await Message.operate(credential)
-                Chat.add_message(Message);
-                console.log({ Message })
+                await Chat.add_message(Message)
                 resolve()
             }
             catch (erro) {
                 reject(erro)
+            }
+        })
+    }
+
+    get_chat_latest_messages(users, id, credential) {
+        return new Promise(async (resolve, reject) => {
+            if ((!users || !Array.isArray(user)) && (!id || typeof id !== "string")) {
+                return reject("To get ")
             }
         })
     }

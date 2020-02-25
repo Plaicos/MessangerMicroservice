@@ -2,9 +2,23 @@ syntax = "proto3";
 package MessangerPackage;
 
 service Messanger {
-    
+    rpc message_user (sendMessage) returns (responseStatus);
 } 
 
+message sendMessage {
+    string user = 1;
+    mmessage message = 2;
+    credential credential = 3;
+}
+
+message mmessage {
+    string user = 1;
+    string text = 2;
+}
+
+message responseStatus {
+    string status = 1;
+}
 
 message scope {
     bool read = 1;

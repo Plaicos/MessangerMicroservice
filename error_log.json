@@ -1,0 +1,1 @@
+{"operationTime":"6797297602942468097","ok":0,"errmsg":"BSON field 'OperationSessionInfo.lsid.delete' is an unknown field.","code":40415,"codeName":"Location40415","$clusterTime":{"clusterTime":"6797297602942468097","signature":{"hash":"CuBC7J6DKSX/Zv34D717nA/xCL8=","keyId":"6784600442664910851"}},"name":"MongoError"}

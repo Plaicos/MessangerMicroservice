@@ -14,7 +14,7 @@ module.exports = class API {
         Controller = new Controller(dependencies)
 
         let api = {
-           
+           message_user: Controller.message_user()
         }
         return Object.freeze(api)
     }
