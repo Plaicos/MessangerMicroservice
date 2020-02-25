@@ -8,6 +8,29 @@ module.exports = class UseCases {
         this.entities = require("../Entities/entities")
     }
 
-    send_message()
-    
+    send_message(message, credential) {
+        return new Promise(async (resolve, reject)=>{
+        
+        })
+    }
+
+    create_chat() {
+
+    }
+
+    get_chat() {
+
+    }
+
+    get_message() {
+
+    }
+
+    notify_user() {
+
+    }
+
+    delete_chat() {
+
+    }
 }
