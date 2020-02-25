@@ -8,5 +8,6 @@ module.exports = class UseCases {
         this.entities = require("../Entities/entities")
     }
 
+    send_message()
     
 }
