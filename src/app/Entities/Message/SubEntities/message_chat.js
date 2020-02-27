@@ -9,6 +9,7 @@ module.exports = ({ chat, DAO }) => {
             if (!await DAO.checkChat(chat)) {
                 return reject("That chat id does not refer to any chat")
             }
+            
             chat.__proto__.data = await DAO.getChat(chat)
             resolve(chat)
         }

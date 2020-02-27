@@ -17,10 +17,11 @@ module.exports = class Chat {
 
             let { users } = data
             let Chat = new Object()
-
+            
             try {
                 Chat.users = await entities.users({ users, SCI })
                 Chat.type = await entities.type({ users })
+                Chat.last_modified = Date.now()
                 Chat = this.methods(Chat)
 
                 resolve(Chat)
@@ -40,13 +41,28 @@ module.exports = class Chat {
             }
 
             let type = ""
-            let { users } = data
+            let { users, id } = data
+            let exists = false
 
             try {
                 users = await entities.users({ users, SCI })
                 type = await entities.type({ users })
 
-                if (await this.DAO.checkChatByUsers(users, type)) {
+                if (id) {
+                    if (await this.DAO.checkChat(id)) {
+                        exists = true
+                    }
+                }
+                else if (users) {
+                    if (await this.DAO.checkChatByUsers(users, type)) {
+                        exists = true
+                    }
+                }
+                else {
+                    return reject("Not enouth data to find chat")
+                }
+
+                if (exists) {
                     resolve(true)
                 }
                 else {
@@ -126,6 +142,8 @@ module.exports = class Chat {
         Chat.__proto__.add_message = this.add_message()
         Chat.__proto__.operate = this.operate()
         Chat.__proto__.register = this.register()
+        Chat.__proto__.load_latest_messages = this.load_latest_messages()
+        Chat.__proto__.modify = this.modify()
         return Chat;
     }
 
@@ -172,6 +190,21 @@ module.exports = class Chat {
         }
     }
 
+    modify() {
+        var { DAO } = this
+        return function () {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await DAO.set_chat_last_modified(this.id, Date.now())
+                    resolve()
+                }
+                catch (erro) {
+                    reject(erro)
+                }
+            })
+        }
+    }
+
     add_message() {
         let { DAO, SCI, entities, Message } = this
         return function (message) {
@@ -182,6 +215,7 @@ module.exports = class Chat {
 
                 try {
                     await DAO.addChatMessage(message)
+                    await this.modify()
                     resolve()
                 }
                 catch (erro) {
@@ -204,11 +238,11 @@ module.exports = class Chat {
                 try {
                     filter.chat = this.id
                     if (filters.text) {
-                        filter.text = await entities.search.text(filters.text)
+                        filter.text = await entities.search.message.text(filters.text)
                     }
                     filters.date = "send"
                     filters.limit = await
-                    filters.offset 
+                        filters.offset
                 }
                 catch (erro) {
                     reject(erro)
@@ -217,7 +251,57 @@ module.exports = class Chat {
         }
     }
 
-    load_latest() {
+    search(filters) {
+        return new Promise(async (resolve, reject) => {
+
+            if (!filters || typeof filters !== "object") {
+                return reject("Chat search filters must be a valid object")
+            }
+
+            let { entities, DAO, SCI } = this
+            let filter = new Object()
+            let pagination = new Object()
+
+            try {
+                if (filters.user) {
+                    filter.user = await entities.search.chat.user({ user: filters.user, SCI })
+                }
+                pagination.limit = await entities.search.chat.limit()
+                pagination.offset = await entities.search.chat.offset()
+
+                let chats = await DAO.search_chats(filter, pagination)
+                resolve(chats)
+            }
+            catch (erro) {
+                reject(erro)
+            }
+        })
+    }
+
+    user_latest_chats(user) {
+        return new Promise(async (resolve, reject) => {
+
+            if (!user || typeof user !== "string") {
+                return reject("User must be a valid string")
+            }
+
+            let { DAO } = this
+            let pagination = new Object()
+            pagination.limit = 10
+            pagination.offset = 0
+
+            try {
+                let chats = await DAO.getUserChats(user, pagination)
+                resolve(chats)
+            }
+            catch (erro) {
+                reject(erro)
+            }
+        })
+
+    }
+
+    load_latest_messages() {
         let { DAO } = this
         return function () {
             return new Promise(async (resolve, reject) => {
@@ -225,7 +309,7 @@ module.exports = class Chat {
 
                 try {
                     filter.chat = this.id
-                    filter.date = "send"
+                    filter.date = "sent"
                     filter.limit = 5
                     filter.offset = 0
                     let latest_messages = await DAO.searchMessages(filter)

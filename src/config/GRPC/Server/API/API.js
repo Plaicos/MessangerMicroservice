@@ -14,7 +14,9 @@ module.exports = class API {
         Controller = new Controller(dependencies)
 
         let api = {
-           message_user: Controller.message_user()
+           message_user: Controller.message_user(),
+           get_latest_messages: Controller.get_latest_messages(),
+           get_latest_chats: Controller.get_latest_chats()
         }
         return Object.freeze(api)
     }

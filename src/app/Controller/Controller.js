@@ -26,4 +26,38 @@ module.exports = class Controller {
             }
         }
     }
+
+    get_latest_messages() {
+        var self = this
+        return async function (call, callback) {
+            let { users, id, credential } = call.request
+
+            try {
+                let response = {
+                    messages: await self.UseCases.get_chat_latest_messages(users, id, credential)
+                }
+                callback(null, response)
+            }
+            catch (erro) {
+                self.handleError(erro, callback)
+            }
+        }
+    }
+
+    get_latest_chats() {
+        var self = this
+        return async function (call, callback) {
+            let { credential } = call.request
+
+            try {
+                let response = {
+                    chats: await self.UseCases.get_user_latest_chats(credential)
+                }
+                callback(null, response)
+            }
+            catch (erro) {
+                self.handleError(erro, callback)
+            }
+        }
+    }
 }

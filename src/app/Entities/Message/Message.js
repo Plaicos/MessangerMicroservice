@@ -22,7 +22,7 @@ module.exports = class Message {
                 Message.user = await entities.user({ user, SCI })
                 Message.text = await entities.text(text)
                 Message.date = {
-                    send: Date.now()
+                    sent: Date.now()
                 }
                 Message.delivered = false;
                 Message.read = false;

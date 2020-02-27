@@ -3,7 +3,30 @@ package MessangerPackage;
 
 service Messanger {
     rpc message_user (sendMessage) returns (responseStatus);
+    rpc get_latest_messages (getLatestMesssage) returns (mmessages);
+    rpc get_latest_chats (getChats) returns (getChatsResp);
 } 
+
+message getChats {
+    credential credential = 1;
+}
+
+message getChatsResp {
+    repeated chat chats = 1;
+}
+
+message chat {
+    string id = 1;
+    repeated string users = 2;
+    string type = 3;
+    int64 last_modified = 4;
+}
+
+message getLatestMesssage {
+    repeated string users = 1;
+    string id = 2;
+    credential credential = 3;
+}
 
 message sendMessage {
     string user = 1;
@@ -11,9 +34,15 @@ message sendMessage {
     credential credential = 3;
 }
 
+message mmessages {
+    repeated mmessage messages = 1;
+}
+
 message mmessage {
-    string user = 1;
-    string text = 2;
+    string id = 1;
+    string chat = 2;
+    string user = 3;
+    string text = 4;
 }
 
 message responseStatus {

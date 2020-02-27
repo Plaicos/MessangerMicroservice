@@ -17,6 +17,7 @@ module.exports = class DAO {
                     reject(erro)
                     return
                 }
+
                 if (result.length > 0) {
                     let Chat = result[0]
                     Chat.id = Chat._id.toString()
@@ -69,7 +70,7 @@ module.exports = class DAO {
         let { ObjectId } = this
         return new Promise(async (resolve, reject) => {
             try {
-                await this.collections.messages.insert(Message)
+                await this.collections.messages.insertOne(Message)
                 resolve()
             }
             catch (erro) {
@@ -163,21 +164,66 @@ module.exports = class DAO {
     searchMessages(filters) {
         return new Promise(async (resolve, reject) => {
 
-            let date = 0
             let pagination = {
-                limit: pagination.limit,
-                offset: pagination.offset
+                limit: filters.limit,
+                offset: filters.offset
             }
             delete filters.limit
             delete filters.offset
 
             if (filters.date && typeof filters.date === "string") {
-                date = `date.${filters.date}: 1`
+                //date = `date.${filters.date}`
                 delete filters.date
             }
 
             try {
-                this.collections.messages.find(filters).sort(date).limit(pagination.limit).skip(pagination.offset).toArray((erro, result) => {
+                this.collections.messages.find(filters).sort({ "date.sent": -1 }).limit(pagination.limit).skip(pagination.offset).toArray((erro, result) => {
+                    if (erro) {
+                        return reject(erro)
+                    }
+                    for (let i = 0; i < result.length; i++) {
+                        result[i].id = result[i]._id.toString()
+                        delete result[i]._id
+                    }
+                    resolve(result)
+                })
+            }
+            catch (erro) {
+                reject(erro)
+            }
+        })
+    }
+
+    search_chats(filters, pagination) {
+        return new Promise(async (resolve, reject) => {
+
+            if (filters.user) {
+                filters.users = { $in: [filters.user] }
+                delete filters.user
+            }
+
+            try {
+                this.collections.chats.find(filters).limit(pagination.limit).skip(pagination.offset).sort({ last_modified: -1 }).toArray((erro, result) => {
+                    if (erro) {
+                        return reject(erro)
+                    }
+                    for (let i = 0; i < result.length; i++) {
+                        result[i].id = result[i]._id.toString()
+                        delete result[i]._id
+                    }
+                    resolve(result)
+                })
+            }
+            catch (erro) {
+                reject(erro)
+            }
+        })
+    }
+
+    getUserChats(user, pagination) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                this.collections.chats.find({ users: user }).limit(pagination.limit).skip(pagination.offset).sort({ last_modified: -1 }).toArray((erro, result) => {
                     if (erro) {
                         return reject(erro)
                     }
@@ -190,4 +236,16 @@ module.exports = class DAO {
         })
     }
 
+    set_chat_last_modified(id, date) {
+        var { ObjectId } = this
+        return new Promise(async (resolve, reject) => {
+            try {
+                await this.collections.chats.updateOne({ _id: ObjectId(id) }, { $set: { last_modified: date } })
+                resolve()
+            }
+            catch (erro) {
+                reject(erro)
+            }
+        })
+    }
 }
