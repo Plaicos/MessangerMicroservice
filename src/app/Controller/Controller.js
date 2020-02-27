@@ -48,7 +48,7 @@ module.exports = class Controller {
         var self = this
         return async function (call, callback) {
             let { credential } = call.request
-
+            console.log(call.getPeer())
             try {
                 let response = {
                     chats: await self.UseCases.get_user_latest_chats(credential)
