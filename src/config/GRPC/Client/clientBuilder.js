@@ -11,7 +11,8 @@ module.exports = class Client {
         var Client = {
             Authenticator: new Services.AuthPackage.Authenticator(config.port.Authenticator, Credentials.makeCredential(Credentials.Services.Authenticator)),
             User: new Services.UserPackage.User(config.port.User, Credentials.makeCredential()),
-            Inventory: new Services.InventoryPackage.Inventory(config.port.Inventory, Credentials.makeCredential())
+            Inventory: new Services.InventoryPackage.Inventory(config.port.Inventory, Credentials.makeCredential()),
+            Notifier: new Services.NotifierPackage.Notifier(config.port.Notifier, Credentials.makeCredential())
         }
         return Client
     }

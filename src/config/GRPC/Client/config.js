@@ -5,7 +5,8 @@ var client_config = {
     port: {
         Authenticator: url.Authenticator,
         User: url.User,
-        Inventory: url.Inventory
+        Inventory: url.Inventory,
+        Notifier: url.Notifier
     }
 }
 

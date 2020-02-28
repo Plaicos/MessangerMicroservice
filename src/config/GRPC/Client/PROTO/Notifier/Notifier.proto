@@ -1,0 +1,38 @@
+syntax = "proto3";
+package NotifierPackage;
+
+service Notifier {
+    rpc queue (queueRequest) returns (responseStatus);
+} 
+
+message queueRequest {
+    notification notification_data = 1;
+}
+
+message notification {
+    string type = 1;
+    string notifier = 2;
+    string target = 3;
+    string data = 4;
+}
+
+message responseStatus {
+    string status = 1;
+}
+
+message scope {
+    bool read = 1;
+    bool write = 2;
+    third_party_scope third_party = 3;
+}
+
+message third_party_scope {
+    bool read = 1;
+    bool write = 2;
+}
+
+message credential {
+    string user = 1;
+    int32 level = 2;
+    scope scope = 3;
+}

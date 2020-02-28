@@ -27,7 +27,7 @@ module.exports = class UseCases {
 
             try {
                 let ChatExist = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).exists()
-                
+
                 if (ChatExist) {
                     Chat = await new entities.Chat({ DAO, SCI, chat: { users: [credential.user, user] } }).load()
                 }
@@ -41,9 +41,10 @@ module.exports = class UseCases {
                 let Message = await new entities.Message({ DAO, SCI, message: { user: credential.user, chat: Chat.id, text: message.text } }).build()
                 await Message.operate(credential)
                 //
-                
+
                 await Chat.add_message(Message)
                 resolve()
+                await SCI.Notifier.queue_notification({ type: "new message", notifier: credential.user, target: user })
             }
             catch (erro) {
                 reject(erro)
@@ -122,7 +123,7 @@ module.exports = class UseCases {
             }
 
             try {
-                
+
             }
             catch (erro) {
                 return reject(erro)

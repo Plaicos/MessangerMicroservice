@@ -9,7 +9,8 @@ module.exports = class SCI {
                 let CommunicationInterface = {
                     Authenticator: new (require("./Interfaces/Authenticator/AuthInterface"))(this.Interface),
                     User: new (require("./Interfaces/User/UserInterface"))(this.Interface),
-                    Inventory: new (require("./Interfaces/Inventory/InventoryInterface"))(this.Interface)
+                    Inventory: new (require("./Interfaces/Inventory/InventoryInterface"))(this.Interface),
+                    Notifier: new (require("./Interfaces/Notifier/NotifierInterface"))(this.Interface)
                 }
                 //
                 resolve(CommunicationInterface)
